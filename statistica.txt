@@ -1,0 +1,10 @@
+nume fisier: statistica.txt
+inaltime: 256
+lungime: 256
+dimensiune: 196666
+identificatorul utilizatorului: 123
+timpul ultimei modificari: 19.11.23
+contorul de legaturi: 1
+drepturi de acces user: RWX
+drepturi de acces grup: R--
+drepturi de acces altii: ---

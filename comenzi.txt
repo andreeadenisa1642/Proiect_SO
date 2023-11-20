@@ -1,0 +1,8 @@
+# compileaza programului
+make
+
+# ruleaza programul cu fisierul cu extensia .bmp
+make run
+
+# curata fisierele generate
+make clean
