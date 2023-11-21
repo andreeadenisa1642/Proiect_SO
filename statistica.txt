@@ -1,10 +1,66 @@
-nume fisier: statistica.txt
-inaltime: 256
-lungime: 256
-dimensiune: 196666
+nume fisier: imagine.txt
+inaltime: 0
+lungime: 0
+dimensiune: 0
 identificatorul utilizatorului: 123
-timpul ultimei modificari: 19.11.23
+timpul ultimei modificari: 21.11.2023
 contorul de legaturi: 1
 drepturi de acces user: RWX
 drepturi de acces grup: R--
 drepturi de acces altii: ---
+
+nume fisier: imagine_3.bmp
+inaltime: 256
+lungime: 256
+dimensiune: 196666
+identificatorul utilizatorului: 123
+timpul ultimei modificari: 21.11.2023
+contorul de legaturi: 1
+drepturi de acces user: RWX
+drepturi de acces grup: R--
+drepturi de acces altii: ---
+
+nume fisier: imagine_1.bmp
+inaltime: 467
+lungime: 467
+dimensiune: 219634
+identificatorul utilizatorului: 123
+timpul ultimei modificari: 21.11.2023
+contorul de legaturi: 1
+drepturi de acces user: RWX
+drepturi de acces grup: R--
+drepturi de acces altii: ---
+
+nume fisier: img2
+inaltime: 0
+lungime: 0
+dimensiune: 4096
+identificatorul utilizatorului: 123
+timpul ultimei modificari: 21.11.2023
+contorul de legaturi: 2
+drepturi de acces user: RWX
+drepturi de acces grup: R--
+drepturi de acces altii: ---
+
+nume fisier: imagine_4.bmp
+inaltime: 1309
+lungime: 762
+dimensiune: 2995046
+identificatorul utilizatorului: 123
+timpul ultimei modificari: 21.11.2023
+contorul de legaturi: 1
+drepturi de acces user: RWX
+drepturi de acces grup: R--
+drepturi de acces altii: ---
+
+nume fisier: imagine_2.bmp
+inaltime: 426
+lungime: 640
+dimensiune: 818058
+identificatorul utilizatorului: 123
+timpul ultimei modificari: 21.11.2023
+contorul de legaturi: 1
+drepturi de acces user: RWX
+drepturi de acces grup: R--
+drepturi de acces altii: ---
+

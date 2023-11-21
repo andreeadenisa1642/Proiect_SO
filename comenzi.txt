@@ -1,3 +1,7 @@
+#pull de pe git , terminalul sa fie in locatia dorita
+git clone https://github.com/andreeadenisa1642/Proiect_SO
+code .
+
 # compileaza programului
 make
 

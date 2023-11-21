@@ -5,7 +5,7 @@ program: program.c
 	gcc -o program program.c
 
 run: program
-	./program imagine_3.bmp
+	./program img
 
 clean:
 	rm -f program

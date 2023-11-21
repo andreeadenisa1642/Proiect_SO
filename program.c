@@ -1,13 +1,16 @@
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/stat.h>
-#include <time.h>
-#include <unistd.h>
+#include<fcntl.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/stat.h>
+#include<sys/types.h>
+#include<sys/time.h>
+#include<sys/stat.h>
+#include<dirent.h>
+#include<time.h>
+#include<unistd.h>
+
+#define MAX_LENGTH 512
 
 //structura cu info despre BMP
 typedef struct{
@@ -83,46 +86,132 @@ void readBMP_info(const char *filename, BMP_info *info)
 void afisarea_info(const char *filename, const BMP_info *info) 
 {
     int info_file = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    if (info_file == -1) {
+    if (info_file == -1)
+    {
         perror("Eroare la deschiderea fisierului de statistici.\n");
         exit(EXIT_FAILURE);
     }
 
-    char info_str[512];
-    sprintf(info_str, "nume fisier: %s\ninaltime: %u\nlungime: %u\ndimensiune: %u\nidentificatorul utilizatorului: %s\ntimpul ultimei modificari: %s\ncontorul de legaturi: %d\ndrepturi de acces user: %s\ndrepturi de acces grup: %s\ndrepturi de acces altii: %s\n",
-            filename, info->inaltime, info->lungime, info->dim, info->user_id, info->timp_modif, info->legaturi,
-            info->user_perm, info->group_perm, info->other_perm);
+    char info_str[MAX_LENGTH];
+    sprintf(info_str, "nume fisier: %s\n", filename);
 
-    if (write(info_file, info_str, strlen(info_str)) == -1) 
+    if (strstr(filename, ".bmp") != NULL)
+    {
+        sprintf(info_str + strlen(info_str), "inaltime: %u\nlungime: %u\n", info->inaltime, info->lungime);
+    } else
+        sprintf(info_str + strlen(info_str), "inaltime: N/A\nlungime: N/A\n");
+
+    sprintf(info_str + strlen(info_str), "dimensiune: %u\nidentificatorul utilizatorului: %s\ntimpul ultimei modificari: %s\ncontorul de legaturi: %d\ndrepturi de acces user: %s\ndrepturi de acces grup: %s\ndrepturi de acces altii: %s\n",
+            info->dim, info->user_id, info->timp_modif, info->legaturi, info->user_perm, info->group_perm, info->other_perm);
+
+    if (write(info_file, info_str, strlen(info_str)) == -1)
     {
         perror("Eroare la scrierea in fisierul de statistici.\n");
         close(info_file);
         exit(EXIT_FAILURE);
     }
 
-    if (close(info_file) == -1) 
+    if (close(info_file) == -1)
     {
         perror("Eroare la inchiderea fisierului de statistici.\n");
         exit(EXIT_FAILURE);
     }
-
     free(info->user_id);
 }
 
-int main(int argc, char *argv[]) 
+void argument_director(const char *dir_name)
 {
-    if (argc != 2) 
+    DIR *dir = opendir(dir_name);
+    if (dir == NULL) {
+        perror("Eroare la deschiderea directorului.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        char file_name[MAX_LENGTH];
+        snprintf(file_name, sizeof(file_name), "%s/%s", dir_name, entry->d_name);
+
+        struct stat file_info;
+        if (lstat(file_name, &file_info) == -1) {
+            perror("Eroare la obtinerea informatiilor despre fisier.\n");
+            continue;
+        }
+
+        BMP_info info;
+        if (S_ISREG(file_info.st_mode) && strstr(entry->d_name, ".bmp") != NULL) //fisier bmp
+        {
+            readBMP_info(file_name, &info);
+            strcpy(info.user_perm, "RWX");
+            strcpy(info.group_perm, "R--");
+            strcpy(info.other_perm, "---");
+            afisarea_info(entry->d_name, &info);
+        } 
+        else if (S_ISREG(file_info.st_mode)) // fisier obisnuit
+        {
+            info.dim = file_info.st_size;
+            info.legaturi = file_info.st_nlink;
+            struct tm *tm_info = localtime(&file_info.st_mtime);
+
+            if (tm_info == NULL)
+            {
+                perror("Eroare la detectarea timpului local.\n");
+                continue;
+            }
+
+            if (strftime(info.timp_modif, sizeof(info.timp_modif), "%d.%m.%Y", tm_info) == 0) {
+                fprintf(stderr, "Eroare la formatarea timpului.\n");
+                continue;
+            }
+
+            info.user_id = malloc(strlen("123") + 1);
+            if (info.user_id == NULL)
+            {
+                perror("Eroare la alocarea memoriei pentru UserId.\n");
+                continue;
+            }
+            strcpy(info.user_id, "123");
+
+            strcpy(info.user_perm, "RWX");
+            strcpy(info.group_perm, "R--");
+            strcpy(info.other_perm, "---");
+
+            afisarea_info(entry->d_name, &info);
+            free(info.user_id);
+        } 
+        else if (S_ISDIR(file_info.st_mode)) // este un director
+        {
+            printf("nume director: %s\nidentificatorul utilizatorului: %d\ndrepturi de acces user: RWX\ndrepturi de acces grup: R--\ndrepturi de acces altii: ---\n",
+                    entry->d_name, file_info.st_uid);
+        } 
+        else if (S_ISLNK(file_info.st_mode)) // este o legatura simbolica
+        {
+            char target[MAX_LENGTH];
+            ssize_t len = readlink(file_name, target, sizeof(target)-1);
+            if (len != -1) {
+                target[len] = '\0';
+
+            printf("nume legatura: %s\ndimensiune: %ld\ndimensiune fisier: %ld\ndrepturi de acces user: RWX\ndrepturi de acces grup: R--\ndrepturi de acces altii: ---\n",
+                entry->d_name, (long)file_info.st_size, (long)file_info.st_size);
+            }
+        }
+    }
+    closedir(dir);
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 2)
     {
-        fprintf(stderr, "Usage: %s <fisier_intrare>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <director_intrare>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    BMP_info info;
-    readBMP_info(argv[1], &info);
-    strcpy(info.user_perm, "RWX");
-    strcpy(info.group_perm, "R--");
-    strcpy(info.other_perm, "---");
-    afisarea_info("statistica.txt", &info);
+    argument_director(argv[1]);
 
     return EXIT_SUCCESS;
 }
