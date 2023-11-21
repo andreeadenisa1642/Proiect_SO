@@ -153,58 +153,61 @@ bool has_bmp_extension(const char *filename) {
     return (ext != NULL && strcmp(ext, ".bmp") == 0);
 }
 
-void process_entry(const char *entry_path, int info_file, const char *output_dir) {
+void process_bmp_conversion(const char *bmp_path) {
     pid_t pid = fork();
 
     if (pid == -1) {
-        perror("Eroare la crearea procesului fiu.\n");
+        perror("Eroare la crearea procesului fiu pentru conversie .bmp.\n");
         exit(EXIT_FAILURE);
     }
 
-    if (pid == 0) { 
-        BMP_info info;
-        readBMP_info(entry_path, &info);
-        strcpy(info.user_perm, "RWX");
-        strcpy(info.group_perm, "R--");
-        strcpy(info.other_perm, "---");
-
-        char output_path[1024];
-        char *entry_name = strrchr(entry_path, '/');
-        snprintf(output_path, sizeof(output_path), "%s/%s_statistica.txt", output_dir, entry_name ? entry_name + 1 : entry_path);
-
-        afisarea_info(output_path, &info, info_file);
-
-        int num_lines = 0;
-        FILE *stat_file = fopen(output_path, "r");
-        if (stat_file != NULL) {
-            char ch;
-            while ((ch = fgetc(stat_file)) != EOF) {
-                if (ch == '\n') {
-                    num_lines++;
-                }
-            }
-            fclose(stat_file);
+    if (pid == 0) {
+        int bmp_file = open(bmp_path, O_RDWR);
+        if (bmp_file == -1) {
+            perror("Eroare la deschiderea fisierului .bmp pentru conversie.\n");
+            exit(EXIT_FAILURE);
         }
 
-        if (write(info_file, &num_lines, sizeof(num_lines)) == -1) {
-            perror("Eroare la scrierea numărului de linii în fișierul de statistici.\n");
+        unsigned char pixel[3];
+        while (read(bmp_file, pixel, sizeof(pixel)) > 0) {
+            unsigned char pixel_gri = 0.299 * pixel[0] + 0.587 * pixel[1] + 0.114 * pixel[2];
+            lseek(bmp_file, -3, SEEK_CUR);
+            write(bmp_file, &pixel_gri, sizeof(pixel_gri));
+        }
+
+        if (close(bmp_file) == -1) {
+            perror("Eroare la inchiderea fisierului .bmp pentru conversie.\n");
             exit(EXIT_FAILURE);
         }
 
         exit(EXIT_SUCCESS);
-    } else {
+    } else {  // Proces părinte
         int status;
         waitpid(pid, &status, 0);
 
-        if (WIFEXITED(status))
-        {
-            printf("Procesul fiu a terminat cu succes.\n");
+        if (WIFEXITED(status)) {
+            printf("S-a incheiat procesul pentru conversie .bmp cu PID-ul %d si codul %d.\n", pid, WEXITSTATUS(status));
         } else {
-            printf("Procesul fiu a terminat cu eroare.\n");
+            printf("Procesul pentru conversie .bmp cu PID-ul %d a terminat cu eroare.\n", pid);
         }
     }
 }
 
+void process_entry(const char *entry_path, int info_file, const char *output_dir) {
+    char path[1024];
+    snprintf(path, sizeof(path), "%s/%s", output_dir, entry_path);
+
+    BMP_info info;
+    readBMP_info(entry_path, &info);
+    strcpy(info.user_perm, "RWX");
+    strcpy(info.group_perm, "R--");
+    strcpy(info.other_perm, "---");
+    afisarea_info(entry_path, &info, info_file);
+
+    if (has_bmp_extension(entry_path)) {
+        process_bmp_conversion(entry_path);
+    }
+}
 void process_directory(const char *dirname, int info_file, const char *output_dir) {
     DIR *dir;
     struct dirent *entry;
