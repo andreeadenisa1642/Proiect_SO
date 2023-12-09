@@ -1,0 +1,21 @@
+nume fisier: img/imagine.txt
+dimensiune: 0
+identificatorul utilizatorului: 123
+timpul ultimei modificari: 21.11.2023
+drepturi de acces user: RWX
+drepturi de acces grup: R--
+drepturi de acces altii: ---
+nume fisier: img/imagine.txt
+dimensiune: 202
+identificatorul utilizatorului: 123
+timpul ultimei modificari: 09.12.2023
+drepturi de acces user: RWX
+drepturi de acces grup: R--
+drepturi de acces altii: ---
+nume fisier: img/imagine.txt
+dimensiune: 406
+identificatorul utilizatorului: 123
+timpul ultimei modificari: 09.12.2023
+drepturi de acces user: RWX
+drepturi de acces grup: R--
+drepturi de acces altii: ---

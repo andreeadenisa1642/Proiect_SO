@@ -1,0 +1,10 @@
+nume fisier: imagine.txt
+inaltime: N/A
+lungime: N/A
+dimensiune: 610
+identificatorul utilizatorului: 123
+timpul ultimei modificari: 09.12.2023
+contorul de legaturi: 1
+drepturi de acces user: RWX
+drepturi de acces grup: R--
+drepturi de acces altii: ---

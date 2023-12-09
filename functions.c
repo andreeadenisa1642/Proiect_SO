@@ -194,7 +194,7 @@ void parcurge_director(const char *dir_path) {
 
                     afisarea_info(file_path, &info, 0);
 
-                    free(info.user_id);
+                    //free(info.user_id);
                 }
             }
         }

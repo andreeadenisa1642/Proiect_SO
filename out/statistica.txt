@@ -1,0 +1,45 @@
+nume fisier: in/imag.c
+inaltime: 0
+lungime: 0
+dimensiune: 0
+identificatorul utilizatorului: 0
+timpul ultimei modificari: 09.12.2023
+contorul de legaturi: 1
+
+
+nume fisier: in/imagine_1.bmp
+inaltime: 467
+lungime: 467
+dimensiune: 219634
+identificatorul utilizatorului: 1000
+timpul ultimei modificari: 09.12.2023
+contorul de legaturi: 1
+(drepturi de acces user: RWX
+drepturi de acces grup: RWX
+drepturi de acces altii: RWX
+
+
+nume fisier: in/dir
+inaltime: 0
+lungime: 0
+dimensiune: 4096
+identificatorul utilizatorului: 1000
+timpul ultimei modificari: 09.12.2023
+contorul de legaturi: 2
+(drepturi de acces user: RWX
+drepturi de acces grup: RWX
+drepturi de acces altii: R-X
+
+
+nume fisier: in/imagine_2.bmp
+inaltime: 426
+lungime: 640
+dimensiune: 818058
+identificatorul utilizatorului: 1000
+timpul ultimei modificari: 09.12.2023
+contorul de legaturi: 1
+(drepturi de acces user: RWX
+drepturi de acces grup: RWX
+drepturi de acces altii: RWX
+
+
